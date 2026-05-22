@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Material Académico — CDI Uandes</title>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F0F4F8;
+    --surface: #E2EAF2;
+    --white: #FFFFFF;
+    --ink: #0D1B2E;
+    --ink-2: #3B5472;
+    --ink-3: #7A95B0;
+    --accent: #1B3A6B;
+    --accent-2: #4A80B5;
+    --accent-light: #E6EEF7;
+    --border: rgba(13,27,46,0.10);
+    --border-strong: rgba(13,27,46,0.20);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 3rem 4rem 2.5rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-area {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .logo-tag {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .logo-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-name span { color: var(--accent-2); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 4px;
+  }
+
+  .drive-link {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 7px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .drive-link:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent-2);
+  }
+
+  .drive-link svg { width: 14px; height: 14px; }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 10;
+    padding: 5rem 4rem 4rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 1px;
+    background: var(--accent-2);
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink-2);
+    line-height: 1.6;
+    max-width: 480px;
+  }
+
+  /* NAV / BREADCRUMB */
+  .nav-bar {
+    position: relative;
+    z-index: 10;
+    padding: 0 4rem;
+    margin-bottom: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 36px;
+  }
+
+  .breadcrumb-item {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .breadcrumb-item:hover { color: var(--ink); }
+  .breadcrumb-item.active { color: var(--ink); }
+  .breadcrumb-sep { color: var(--ink-3); font-size: 12px; }
+
+  .back-btn {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px 0;
+    transition: color 0.15s;
+    margin-bottom: 8px;
+  }
+
+  .back-btn:hover { color: var(--ink); }
+  .back-btn.visible { display: flex; }
+
+  /* SEARCH */
+  .search-wrap {
+    position: relative;
+    z-index: 10;
+    padding: 0 4rem 2rem;
+    display: none;
+    max-width: 460px;
+  }
+
+  .search-wrap.visible { display: block; }
+
+  .search-inner {
+    position: relative;
+  }
+
+  .search-inner input {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink);
+    background: var(--white);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    padding: 12px 16px 12px 44px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-inner input:focus {
+    border-color: var(--accent-2);
+    box-shadow: 0 0 0 3px rgba(74,128,181,0.15);
+  }
+
+  .search-inner input::placeholder { color: var(--ink-3); }
+
+  .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-3);
+    pointer-events: none;
+  }
+
+  /* GRID */
+  .grid-container {
+    position: relative;
+    z-index: 10;
+    padding: 0 4rem 6rem;
+  }
+
+  .grid {
+    display: grid;
+    gap: 16px;
+    transition: opacity 0.2s;
+  }
+
+  .grid.carreras-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .grid.ramos-grid {
+    grid-template-columns: 1fr;
+    max-width: 700px;
+  }
+
+  /* CARRERA CARD */
+  .carrera-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeUp 0.4s both;
+  }
+
+  .carrera-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(26,23,20,0.10);
+    border-color: var(--border-strong);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .card-body {}
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .card-count {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ink-3);
+    letter-spacing: 0.02em;
+  }
+
+  .card-arrow {
+    align-self: flex-end;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-3);
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    margin-top: auto;
+  }
+
+  .carrera-card:hover .card-arrow {
+    background: var(--accent-2);
+    border-color: var(--accent-2);
+    color: white;
+  }
+
+  /* RAMO CARD */
+  .ramo-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    animation: fadeUp 0.3s both;
+    gap: 16px;
+  }
+
+  .ramo-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 20px rgba(26,23,20,0.08);
+    border-color: var(--border-strong);
+  }
+
+  .ramo-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ramo-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .ramo-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .ramo-meta {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-top: 2px;
+  }
+
+  .ramo-ext {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .ramo-card:hover .ramo-ext {
+    background: var(--accent-2);
+    color: white;
+    border-color: var(--accent-2);
+  }
+
+  /* SECTION TITLE */
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 1.25rem;
+  }
+
+  /* EMPTY STATE */
+  .empty {
+    padding: 3rem 0;
+    color: var(--ink-3);
+    font-size: 15px;
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  .footer-cta {
+    background: var(--accent);
+    color: white;
+    padding: 2.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-cta-text {
+    max-width: 560px;
+  }
+
+  .footer-cta-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: white;
+    margin-bottom: 8px;
+  }
+
+  .footer-cta-text p {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+  }
+
+  .footer-cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 22px;
+    border-radius: 100px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+
+  .footer-cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .footer-meta {
+    padding: 1.5rem 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-meta p {
+    font-size: 12px;
+    color: var(--ink-3);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header, .hero, .nav-bar, .search-wrap, .grid-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    .footer-cta, .footer-meta {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+    .hero { padding-top: 3rem; }
+    .grid.ramos-grid { max-width: 100%; }
+    .footer-cta { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+    .footer-cta-button { width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-area" style="display:flex;align-items:center;gap:14px;">
+    <img src="data:image/jpeg;base64,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" 
+         alt="Logo CDI" style="height:52px;width:auto;display:block;">
+    <div>
+      <div style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);">Centro de Alumnos</div>
+      <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.02em;">Ingeniería <span style="color:var(--accent-2);">Uandes</span></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <a href="https://drive.google.com/drive/folders/1VnSIXhYHDdJ5L9p9NF7aYu-OesUvxfqB" target="_blank" class="drive-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3L2 20h20L12 3z"/><path d="M12 3L2 20h6.5l3.5-6 3.5 6H22L12 3z" fill="currentColor" stroke="none" opacity="0.2"/></svg>
+      Ver Drive
+    </a>
+  </div>
+</header>
+
+<section class="hero" id="hero">
+  <div class="hero-eyebrow">Material académico</div>
+  <h1>Pruebas y apuntes<br><em>de años anteriores</em></h1>
+  <p class="hero-sub">Todo el material recopilado por el Centro de Alumnos, organizado por carrera y ramo.</p>
+</section>
+
+<div class="nav-bar" id="nav-bar">
+  <span class="breadcrumb-item active" id="bc-home" onclick="goHome()">Carreras</span>
+  <span class="breadcrumb-sep" id="bc-sep" style="display:none">›</span>
+  <span class="breadcrumb-item active" id="bc-carrera" style="display:none"></span>
+</div>
+
+<div class="search-wrap" id="search-wrap">
+  <div class="search-inner">
+    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="search-input" placeholder="Buscar ramo..." oninput="filterRamos()">
+  </div>
+</div>
+
+<div class="grid-container">
+  <p class="section-label" id="section-label">Selecciona tu malla</p>
+  <div class="grid carreras-grid" id="main-grid"></div>
+</div>
+
+<footer>
+  <div class="footer-cta">
+    <div class="footer-cta-text">
+      <div class="footer-cta-label">¿Tienes material para aportar?</div>
+      <p>Cualquier aporte al material académico es bienvenido — pruebas, guías, resúmenes o apuntes. Envíalos y ayudas a toda la generación que viene atrás.</p>
+    </div>
+    <a href="mailto:asesoramiento.cdi@gmail.com?subject=Aporte%20al%20material%20académico" class="footer-cta-button">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      asesoramiento.cdi@gmail.com
+    </a>
+  </div>
+  <div class="footer-meta">
+    <p>CDI Uandes · Material académico colaborativo</p>
+    <p>Requiere correo @miuandes para acceder</p>
+  </div>
+</footer>
+
+<script>
+const carreras = [
+  {
+    id: 'plan-comun',
+    nombre: 'Plan Común',
+    emoji: '📐',
+    color: '#E8F4F0',
+    dot: '#1D9E75',
+    ramos: [
+      { nombre: 'Cálculo I', url: 'https://drive.google.com/drive/folders/1Jy1cQtXgJ0-gnhxP4yjbn0p1g2XR6uAb' },
+      { nombre: 'Cálculo II', url: 'https://drive.google.com/drive/folders/1MxhPWjyH5TtsN_UOrVVF1vm7bYMrARzf' },
+      { nombre: 'Álgebra Lineal', url: 'https://drive.google.com/drive/folders/16gOZSKwJTatJ39kHBBcItVUNV_ogEHCo' },
+      { nombre: 'EDO', url: 'https://drive.google.com/drive/folders/1jOZD1m12Vi3RPFEnMG5_k14_eQnpAMy8' },
+      { nombre: 'Mecánica y Ondas', url: 'https://drive.google.com/drive/folders/1aGByHLEStpb8uJXjlzY91ZOfiW9SHSU9' },
+      { nombre: 'Electricidad y Magnetismo', url: 'https://drive.google.com/drive/folders/1dw2dtXmAfqs03XTqdZd7gkWdP8pnxcBg' },
+      { nombre: 'Intro a la Mecánica', url: 'https://drive.google.com/drive/folders/11dDJd_cTXq8RelTaUDB6Kr9ifK_Sh7mw' },
+      { nombre: 'Estática', url: 'https://drive.google.com/drive/folders/1Mc0gPcJTGpmWolSx6O34ODRcjtjQiXYJ' },
+      { nombre: 'Fundamentos de Química', url: 'https://drive.google.com/drive/folders/1JNowu0JT5lAp_4AHA0_leowHHkK1F-nz' },
+      { nombre: 'Probabilidades y Estadística', url: 'https://drive.google.com/drive/folders/1N4GgJt00t8nf0lxOKvqDkO4MVPHWQYeB' },
+      { nombre: 'Programación', url: 'https://drive.google.com/drive/folders/1P9spdWVzi8nfXVc1HYKy4RozJi5vEiQ7' },
+      { nombre: 'F. Economía', url: 'https://drive.google.com/drive/folders/1_CKKyUdJLtMjSpRda9BETfe6Tb2LE6Nf' },
+      { nombre: 'AIEC', url: 'https://drive.google.com/drive/folders/1nn0HEck18lzubW5RmbSjvztRcZ9-niJL' },
+    ]
+  },
+  {
+    id: 'obras-civiles',
+    nombre: 'Obras Civiles',
+    emoji: '🏗️',
+    color: '#F5EAE7',
+    dot: '#C8462B',
+    ramos: [
+      { nombre: 'Análisis Estructural', url: 'https://drive.google.com/drive/folders/1MgJGwJNdcF2TR0qDTuIk_i6E-PCfdvIb' },
+      { nombre: 'Mecánica de Materiales', url: 'https://drive.google.com/drive/folders/1_dHGaYENgSxBP6cSM-8VAsSdV8wm0aHG' },
+      { nombre: 'Materiales de Construcción', url: 'https://drive.google.com/drive/folders/166j0j5_jcF4lp272V2flVwaRK0W0kbDO' },
+      { nombre: 'Métodos y Técnicas de Construcción', url: 'https://drive.google.com/drive/folders/1zVaX16pjVvr62CDN5LdeIkVOqtSkCXYY' },
+      { nombre: 'Métodos Numéricos', url: 'https://drive.google.com/drive/folders/12dj3MUiuogd7-hztJyJout48FbMOyv3g' },
+      { nombre: 'Hormigón Armado', url: 'https://drive.google.com/drive/folders/1Ive_EMmmBAg7XTsOCybJddLuLAkKV7_m' },
+      { nombre: 'Hidráulica', url: 'https://drive.google.com/drive/folders/1QSkme9r4SvDSIJBR8gYJUnOE-aaXfQ4e' },
+      { nombre: 'Hidrología', url: 'https://drive.google.com/drive/folders/1G_oCULSw6eagM_9o_3NautmZ0O3CYO2N' },
+      { nombre: 'Fluid Mechanics', url: 'https://drive.google.com/drive/folders/14rEGzARxtPuCVMDjUvrXPUoPebX6iyRw' },
+      { nombre: 'Intro a la Geomecánica', url: 'https://drive.google.com/drive/folders/1AudtK3XdBM73xjRKZ3ejfciIFHHxJ7q2' },
+      { nombre: 'Sistema de Transporte', url: 'https://drive.google.com/drive/folders/1_2MwF9usP7gijOMmsPyK3BuZyJNQZGwz' },
+    ]
+  },
+  {
+    id: 'industrial',
+    nombre: 'Industrial',
+    emoji: '⚙️',
+    color: '#EEF2FB',
+    dot: '#3A5BC7',
+    ramos: [
+      { nombre: 'Contabilidad', url: 'https://drive.google.com/drive/folders/1Lnzuk-KYXub2SXhc4cNjfjoQ3_ibYRyr' },
+      { nombre: 'Microeconomía', url: 'https://drive.google.com/drive/folders/1ztAKxfMtmZ3N2CRZ6KU-yGSredwk11xa' },
+      { nombre: 'Bases de Datos', url: 'https://drive.google.com/drive/folders/19I1okyntp8_gmbLGfdUMWAncnwcPIO-l' },
+      { nombre: 'Optimización', url: 'https://drive.google.com/drive/folders/19SJNHHUKvaJ2u_BNFGTs3TUaQr6XaNOi' },
+      { nombre: 'Modelos Estocásticos', url: 'https://drive.google.com/drive/folders/1ehGjr_TIVaPRFXpCdCxVh5Z3Vvg3WC6V' },
+      { nombre: 'Programación Matemática', url: 'https://drive.google.com/drive/folders/1mktMDSTUKwyd3_FzZhbyjZg_AOCYOszO' },
+      { nombre: 'Métodos Estadísticos Para la Gestión', url: 'https://drive.google.com/drive/folders/1y2nUW2hO8ugwACU6IZU_YN5HymVGx9Uk' },
+    ]
+  },
+  {
+    id: 'electrica',
+    nombre: 'Eléctrica',
+    emoji: '⚡',
+    color: '#FFFAE8',
+    dot: '#C9920A',
+    ramos: [
+      { nombre: 'Análisis de Circuitos', url: 'https://drive.google.com/drive/folders/1ZuNaGv_DNGOPp_fII9iJFGHi7t7KCqm0' },
+      { nombre: 'Señales y Sistemas', url: 'https://drive.google.com/drive/folders/1fblEgKionPu6Omwj_Y0qzlnTWc0wf7NS' },
+      { nombre: 'Sistemas Digitales', url: 'https://drive.google.com/drive/folders/1U-DWgxmUsrlvGNPKeywx6nRpfDAUjDWN' },
+      { nombre: 'Sistemas Electrónicos', url: 'https://drive.google.com/drive/folders/19h3Q33p2JcesPDYN53k96TGmeiFF8A8X' },
+      { nombre: 'Control Automático', url: 'https://drive.google.com/drive/folders/1VsDSSGEVb5Q2BxW-P-3K64eI3SLdlrjw' },
+      { nombre: 'Conversión de Energía', url: 'https://drive.google.com/drive/folders/1DeAE1gh5_QylyMlFwhAzwnPqOWAY27di' },
+      { nombre: 'Sistemas de Potencia', url: 'https://drive.google.com/drive/folders/1KDfbVeRsst53CZbW-fIMBw0xKXFelWDl' },
+      { nombre: 'Protecciones Eléctricas', url: 'https://drive.google.com/drive/folders/1OIdW1syAZH9whjh5rqFGDR6UfxKSbXzk' },
+      { nombre: 'Mercados Eléctricos', url: 'https://drive.google.com/drive/folders/1wHG_8scR3Bk2Rm7vbv1RhueiYpC0imgZ' },
+      { nombre: 'Control de Convertidores', url: 'https://drive.google.com/drive/folders/19jkO8By0dZqg8tX9qGRchEQCgLQbypYp' },
+      { nombre: 'Procesamiento de Señales', url: 'https://drive.google.com/drive/folders/14dKoIuENGuQeI5RSZs3FQb0CDicbAI-R' },
+    ]
+  },
+  {
+    id: 'computacion',
+    nombre: 'Computación',
+    emoji: '💻',
+    color: '#F0EEF8',
+    dot: '#6B4FC8',
+    ramos: [
+      { nombre: 'Arquitectura de Computadores', url: 'https://drive.google.com/drive/folders/0B7fLfOr3MydSWHdJV0dGdXQzUzA' },
+      { nombre: 'Bases de Datos', url: 'https://drive.google.com/drive/folders/0B7fLfOr3MydSaG1SN0pWYTF3RUk' },
+      { nombre: 'Estructuras de Datos y Algoritmos', url: 'https://drive.google.com/drive/folders/10Jpu2h1mtZG1-ugmtQTEsqndROslDA2h' },
+      { nombre: 'Programación de Bajo Nivel', url: 'https://drive.google.com/drive/folders/1xAlWV8oa1hJGzEFGG_zA81AHys-HgTbT' },
+      { nombre: 'Sistemas Operativos y Redes', url: 'https://drive.google.com/drive/folders/1NLZC6zigsJNXwVnhvcrNYe31aDtIlB7f' },
+      { nombre: 'Autómatas y Computabilidad', url: 'https://drive.google.com/drive/folders/166OZUegnN6ZY_2LVRktyeHABFGOUQ6ld' },
+    ]
+  },
+  {
+    id: 'quimica-ambiental',
+    nombre: 'Química Ambiental',
+    emoji: '🧪',
+    color: '#EEFAF3',
+    dot: '#1D8C55',
+    ramos: [
+      { nombre: 'Microbiología Industrial y Ambiental', url: 'https://drive.google.com/drive/folders/18NWhUy0ALVivxGvBIoahWULnlplsUM-L' },
+      { nombre: 'Termotecnia', url: 'https://drive.google.com/drive/folders/1mNyYuEVuUYo6aBdPZ4gufC0vFNDPyVI3' },
+      { nombre: 'Transferencia de Calor', url: 'https://drive.google.com/drive/folders/1Rn7sQkTduN0TIRt8cEJY1PS-AiAp7HkH' },
+      { nombre: 'Transferencia de Masa', url: 'https://drive.google.com/drive/folders/1KkxTD8H34Sk120F1eY5zpBvJZc2RO9Ck' },
+    ]
+  }
+];
+
+let currentCarrera = null;
+
+function goHome() {
+  currentCarrera = null;
+  renderCarreras();
+}
+
+function renderCarreras() {
+  const grid = document.getElementById('main-grid');
+  const label = document.getElementById('section-label');
+  const searchWrap = document.getElementById('search-wrap');
+  const bcSep = document.getElementById('bc-sep');
+  const bcCarrera = document.getElementById('bc-carrera');
+
+  label.textContent = 'Selecciona tu malla';
+  searchWrap.classList.remove('visible');
+  bcSep.style.display = 'none';
+  bcCarrera.style.display = 'none';
+
+  grid.className = 'grid carreras-grid';
+  grid.innerHTML = '';
+
+  carreras.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'carrera-card';
+    card.style.animationDelay = (i * 0.05) + 's';
+    card.onclick = () => renderRamos(c);
+    card.innerHTML = `
+      <div class="card-icon" style="background:${c.color}; font-size: 26px;">${c.emoji}</div>
+      <div class="card-body">
+        <div class="card-name">${c.nombre}</div>
+        <div class="card-count">${c.ramos.length} ramos disponibles</div>
+      </div>
+      <div class="card-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderRamos(carrera) {
+  currentCarrera = carrera;
+  const grid = document.getElementById('main-grid');
+  const label = document.getElementById('section-label');
+  const searchWrap = document.getElementById('search-wrap');
+  const searchInput = document.getElementById('search-input');
+  const bcSep = document.getElementById('bc-sep');
+  const bcCarrera = document.getElementById('bc-carrera');
+
+  label.textContent = carrera.nombre;
+  searchWrap.classList.add('visible');
+  searchInput.value = '';
+  bcSep.style.display = 'inline';
+  bcCarrera.style.display = 'inline';
+  bcCarrera.textContent = carrera.nombre;
+
+  renderRamoList(carrera.ramos, carrera.dot);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderRamoList(ramos, dot) {
+  const grid = document.getElementById('main-grid');
+  grid.className = 'grid ramos-grid';
+  grid.innerHTML = '';
+
+  if (ramos.length === 0) {
+    grid.innerHTML = '<p class="empty">No se encontraron ramos.</p>';
+    return;
+  }
+
+  ramos.forEach((r, i) => {
+    const a = document.createElement('a');
+    a.className = 'ramo-card';
+    a.href = r.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.style.animationDelay = (i * 0.04) + 's';
+    a.innerHTML = `
+      <div class="ramo-left">
+        <div class="ramo-dot" style="background:${dot || '#C8462B'}"></div>
+        <div>
+          <div class="ramo-name">${r.nombre}</div>
+          <div class="ramo-meta">Pruebas · Guías · Apuntes</div>
+        </div>
+      </div>
+      <div class="ramo-ext">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Abrir
+      </div>
+    `;
+    grid.appendChild(a);
+  });
+}
+
+function filterRamos() {
+  if (!currentCarrera) return;
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = currentCarrera.ramos.filter(r => r.nombre.toLowerCase().includes(q));
+  renderRamoList(filtered, currentCarrera.dot);
+}
+
+renderCarreras();
+</script>
+</body>
+</html>
